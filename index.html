@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FastAPI Assignment Frontend</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h2 { margin-top: 40px; }
+    input, select, button { padding: 8px; margin: 5px 0; width: 100%; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <h1>Backend Assignment Demo</h1>
+
+  <!-- REGISTER -->
+  <h2>Register</h2>
+  <input type="email" id="regEmail" placeholder="Email" />
+  <input type="password" id="regPassword" placeholder="Password" />
+  <select id="regRole">
+    <option value="user">User</option>
+    <option value="admin">Admin</option>
+  </select>
+  <button onclick="register()">Register</button>
+  <pre id="regResult"></pre>
+
+  <!-- LOGIN -->
+  <h2>Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email" />
+  <input type="password" id="loginPassword" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <pre id="loginResult"></pre>
+
+  <!-- ME -->
+  <h2>Me</h2>
+  <button onclick="getMe()">Get My Info</button>
+  <pre id="meResult"></pre>
+
+  <!-- TASKS -->
+  <h2>Tasks</h2>
+  <button onclick="getTasks()">Get Tasks</button>
+  <pre id="tasksResult"></pre>
+
+<script>
+  let token = "";
+
+  async function register() {
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
+
+    const res = await fetch('http://127.0.0.1:8000/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, password, role})
+    });
+
+    const data = await res.json();
+    document.getElementById('regResult').textContent = JSON.stringify(data, null, 2);
+  }
+
+  async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const formData = new URLSearchParams();
+    formData.append('username', email);
+    formData.append('password', password);
+
+    const res = await fetch('http://127.0.0.1:8000/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: formData
+    });
+
+    const data = await res.json();
+    document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+
+    if (data.access_token) token = data.access_token;
+  }
+
+  async function getMe() {
+    if (!token) { alert("Please login first!"); return; }
+
+    const res = await fetch('http://127.0.0.1:8000/me', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    document.getElementById('meResult').textContent = JSON.stringify(data, null, 2);
+  }
+
+  async function getTasks() {
+    if (!token) { alert("Please login first!"); return; }
+
+    const res = await fetch('http://127.0.0.1:8000/tasks', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    document.getElementById('tasksResult').textContent = JSON.stringify(data, null, 2);
+  }
+</script>
+
+</body>
+</html>
