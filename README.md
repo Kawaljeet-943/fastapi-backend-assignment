@@ -27,7 +27,7 @@ This project is a backend API with authentication, role-based access, and CRUD f
 ## How to Run
 1. Clone the repository:
    ```bash
-   git clone <https://github.com/Kawaljeet-943/fastapi-backend-assignment.git>
+   git clone https://github.com/Kawaljeet-943/fastapi-backend-assignment.git
    cd fastapi-backend-assignment
    
 2. Activate virtual environment:
